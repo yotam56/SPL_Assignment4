@@ -13,19 +13,22 @@ class Dao:
         ins_dict = vars(dto_instance)
 
         column_names = ','.join(ins_dict.keys())
-        params = ins_dict.values()
-        print(f"params: {params}")
+        params = list(ins_dict.values())
 
         qmarks = ','.join(['?'] * len(ins_dict))
 
         stmt = 'INSERT INTO {} ({}) VALUES ({})'.format(self._table_name, column_names, qmarks)
-        print(f"stmt: {stmt}")
 
         self._conn.execute(stmt, params)
 
     def find_all(self):
         c = self._conn.cursor()
         c.execute('SELECT * FROM {}'.format(self._table_name))
+        return orm(c, self._dto_type)
+
+    def find_first_ordered(self, filter_col, filter_value, order_by, limit): # TODO select all before
+        c = self._conn.cursor()
+        c.execute(f"SELECT * FROM {self._table_name} WHERE {filter_col}={filter_value} ORDER BY {order_by} LIMIT {limit}")
         return orm(c, self._dto_type)
 
     def find(self, **keyvals):
@@ -37,6 +40,7 @@ class Dao:
         c = self._conn.cursor()
         c.execute(stmt, params)
         return orm(c, self._dto_type)
+
 
     def delete(self, **keyvals):
         column_names = keyvals.keys()
