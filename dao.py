@@ -26,14 +26,14 @@ class Dao:
         c.execute('SELECT * FROM {}'.format(self._table_name))
         return orm(c, self._dto_type)
 
-    def find_first_ordered(self, filter_col, filter_value, order_by, limit): # TODO select all before
+    def find_first_ordered(self, filter_col, filter_value, order_by, limit):
         c = self._conn.cursor()
-        c.execute(f"SELECT * FROM {self._table_name} WHERE {filter_col}={filter_value} ORDER BY {order_by} LIMIT {limit}")
+        c.execute(f"SELECT * FROM {self._table_name} WHERE {filter_col}='{filter_value}' ORDER BY {order_by} LIMIT {limit}")
         return orm(c, self._dto_type)
 
     def find(self, **keyvals):
         column_names = keyvals.keys()
-        params = keyvals.values()
+        params = list(keyvals.values())
 
         stmt = 'SELECT * FROM {} WHERE {}'.format(self._table_name, ' AND '.join([col + '=?' for col in column_names]))
 
@@ -44,7 +44,7 @@ class Dao:
 
     def delete(self, **keyvals):
         column_names = keyvals.keys()
-        params = keyvals.values()
+        params = list(keyvals.values())
 
         stmt = 'DELETE FROM {} WHERE {}'.format(self._table_name, ' AND '.join([col + '=?' for col in column_names]))
 

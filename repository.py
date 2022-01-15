@@ -4,11 +4,11 @@ from dao import Dao
 from dto import Hat
 from dto import Supplier
 from dto import Order
-
+import sys
 
 class _Repository:
     def __init__(self):
-        self._conn = sqlite3.connect('database.db')
+        self._conn = sqlite3.connect(sys.argv[4])
         self.hats = Dao(Hat, self._conn)
         self.suppliers = Dao(Supplier, self._conn)
         self.orders = Dao(Order, self._conn)
